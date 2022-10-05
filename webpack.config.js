@@ -1,6 +1,7 @@
 var path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var webpack = require('webpack');
+const miniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
   entry: {
