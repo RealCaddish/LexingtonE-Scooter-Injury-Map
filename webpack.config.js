@@ -1,31 +1,28 @@
-var path = require('path');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var webpack = require('webpack');
-const miniCssExtractPlugin = require('mini-css-extract-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require('path')
 
 module.exports = {
-  entry: {
-    index: './src/js/main.js',
+  entry: './src/js/main.js',
+  output: {
+    filename: 'main.js',
+    path: path.resolve(__dirname, 'dist')
   },
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Development',
     }),
   ],
-  output: {
-    filename: '[name].main.js'
-  },
   devServer: {
     static: path.resolve(__dirname, 'dist'),
     port: 8080,
     hot: true
   },
-  optimization: {
-    runtimeChunk: 'single',
-  },
-  mode: 'development',
   module: {
     rules: [
+      {
+        test:/\.css$/,
+        use:['style-loader','css-loader']
+    },
       {
         test: /\.(scss)$/,
         use: [

@@ -2,13 +2,10 @@
   "name": "lexingtone-scooter-injury-map",
   "version": "1.0.0",
   "description": "This repository stores assets for learning about Lexington, KY's e-scooter injury-death data. The web map consists of data from police reports taken from the Lexington-Fayette County Police Department. The timeframe for this project looks at data since 2018 when the e-scooter program for Lexington was initialized.",
-  "private": true,
+  "source": "./src/index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "webpack --watch",
-    "start": "webpack serve --mode development",
-    "build": "webpack-dev-server",
-    "build:prod": "webpack -p"
+    "dev": "webpack serve --mode development",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -25,6 +22,7 @@
     "autoprefixer": "^10.4.12",
     "css-loader": "^6.7.1",
     "csv-loader": "^3.0.5",
+    "html-loader": "^4.2.0",
     "html-webpack-plugin": "^5.5.0",
     "mini-css-extract-plugin": "^2.6.1",
     "postcss-loader": "^7.0.1",
@@ -39,7 +37,11 @@
   "dependencies": {
     "@popperjs/core": "^2.11.6",
     "bootstrap": "^5.2.2",
+    "bootstrap-sass": "^3.4.3",
     "d3": "^7.6.1",
-    "lodash": "^4.17.21"
+    "jquery": "^3.6.1",
+    "leaflet": "^1.9.2",
+    "lodash": "^4.17.21",
+    "popper.js": "^1.16.1"
   }
 }
