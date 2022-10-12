@@ -1,0 +1,104 @@
+body {
+  background: rgba(211, 210, 208, 0.692);
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  opacity: 40;
+}
+
+.col {
+  background: hwb(0 54% 46%)
+}
+
+h1 {
+  font-weight: 800;
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+
+}
+
+h3 {
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+}
+
+p {
+  line-height: 1.7rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+}
+
+#map {
+  height: 80vh;
+  background: hsl(256, 22%, 47%);
+}
+
+#legend {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  border-radius: 2px;
+  max-width: 300px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+#legend span {
+  font-family: 'Montserrat', sans-serif;
+  width: 20px;
+  height: 20px;
+  float: left;
+  margin: 0 10px 4px 0;
+}
+
+#legend label {
+  font-size: 0.9rem;
+  display: inline;
+}
+
+#legend label:after {
+  font-family: 'Montserrat', sans-serif;
+  content: '';
+  display: block;
+  clear: both;
+}
+
+#button-fly-nash {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 85%;
+  color: white;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  background: hsl(256, 22%, 47%)
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+
+  aside {
+    height: 80vh;
+  }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {}
+
+a {
+  color: hwb(349 10% 63%);
+}
+
+
+svg {
+  border: 1px solid #000;
+}
+
+.rectangle hover {
+  opacity: .66;
+};
+
+dropdown-ui {
+  font-family: 'Montserrat', sans-serif;
+}

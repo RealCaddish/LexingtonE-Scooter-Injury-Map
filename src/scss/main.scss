@@ -1,0 +1,16 @@
+@import "./abstracts/variables";
+
+#map { height: 180px; }
+// custom colors 
+$custom-colors: (
+  "custom-color": #345545
+);
+
+// 3. Include remainder of required Bootstrap stylesheets
+@import "~bootstrap/scss/variables";
+
+@import "~bootstrap/scss/maps";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/root";
+
+@import "~bootstrap/scss/bootstrap";
