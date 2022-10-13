@@ -1,133 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lexington E-Scooter & Bicycle Incidents 2018-2022</title>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lexington E-Scooter & Bicycle Incidents 2018-2022</title>
+    <!--Bootstrap CSS-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
 
-  <!--Bootstrap CSS-->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!--Personal CSS-->
+    <link rel="stylesheet" href="./styles/app.css" />
 
-  <!--Personal CSS-->
-  <link rel="stylesheet" href="./styles/app.css">
+    <!--Leaflet CSS-->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+      integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+      crossorigin=""
+    />
+    <!--Pure CSS-->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/purecss@2.1.0/build/pure-min.css"
+      integrity="sha384-yHIFVG6ClnONEA5yB5DJXfW2/KC173DIQrYoZMEtBvGzmf0PKiGyNEqe9N6BNDBH"
+      crossorigin="anonymous"
+    />
 
-  <!--Leaflet CSS-->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
-    integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
-    crossorigin="" />
-  <!--Pure CSS-->
-  <link rel="stylesheet" href="https://unpkg.com/purecss@2.1.0/build/pure-min.css"
-    integrity="sha384-yHIFVG6ClnONEA5yB5DJXfW2/KC173DIQrYoZMEtBvGzmf0PKiGyNEqe9N6BNDBH" crossorigin="anonymous">
+    <!--Montserrat Google Font Import-->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-  <!--Montserrat Google Font Import-->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&display=swap" rel="stylesheet">
-</head>
-
-<body>
-  <div class="container-fluid">
-    <header class="row bg-dark text-white py-3">
-      <div class="col">
-        <h1>Lexington Bicycle & E-Scooter Incidents Map </h1>
-      </div>
-    </header>
-
-    <section class="row">
-      <div class="col-md-8 col-lg-9 col-xl-10 order-md-2 px-0">
-        <div id="map"></div>
-        <div class="pure-button-group">
-          <button class="pure-button" id="button-fly-nash">
-            Fly back to Davidson County
-          </button>
+  <body>
+    <div class="container-fluid">
+      <header class="row bg-dark text-white py-3">
+        <div class="col">
+          <h1>Lexington Bicycle & E-Scooter Incidents Map</h1>
         </div>
-      </div>
-      <aside id="about" class="col-md-4 col-lg-3 col-xl-2 order-md-1 text-white py-2 pl-3 bg-secondary overflow-auto">
-        <section>
-          <h3 class="py-2">Which areas of Lexington are prone to e-scooter and bicycle injuries?</h3>
+      </header>
 
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-          <!-- <div style="text-align: center">
+      <section class="row">
+        <div class="col-md-8 col-lg-9 col-xl-10 order-md-2 px-0">
+          <div id="map"></div>
+          <div class="pure-button-group">
+            <button class="pure-button" id="button-fly-nash">
+              Fly back to Davidson County
+            </button>
+          </div>
+        </div>
+        <aside
+          id="about"
+          class="col-md-4 col-lg-3 col-xl-2 order-md-1 text-white py-2 pl-3 bg-secondary overflow-auto"
+        >
+          <section>
+            <h3 class="py-2">
+              Which areas of Lexington are prone to e-scooter and bicycle
+              injuries?
+            </h3>
+
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+              reprehenderit in voluptate velit esse cillum dolore eu fugiat
+              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+              sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+            <!-- <div style="text-align: center">
             <h3> Prices Bar Chart</h3>
             <div id="d3-container">
             </div>
           </div> -->
 
-          <p>Nashville is not immune to these changes. In fact, because of its major tourist industry, Nashville's
-            residential neighborhoods have seen a hightened level of short-term conversions affecting rental supply on
-            a
-            level higher than average for other similar-sized metropolitan areas. Municipalities across the nation are
-            dealing with this influx of short-term rentals in various ways depending on many factors related to the
-            nature of the city itself. In order to address the affordability as well as supply of rental properties
-            for
-            the city's inhabitants, this map seeks to contextualize the current occupancy rate in relation to the
-            influx
-            of available short-term rentals from Airbnb.</p>
-          <p> Click on a block group to see more information about that particular region's Airbnb supply.</p>
-          <hr>Data for this map was provided by the following resources.
-          <ul>
-            <li><a href='http://insideairbnb.com/get-the-data/'><strong>Inside Airbnb</strong></a> </li>
-            <li><a href='https://data.census.gov/cedsci/table?q=S2501&tid=ACSST5Y2020.S2501'><strong>US Census Bureau
-                  Occupancy Charactersistics Table for Davidson County, TN</strong></a></li>
-            <li><a href='https://www.census.gov/cgi-bin/geo/shapefiles/index.php'><strong>US Census Tiger/Line
-                  Shapefiles</strong></a></li>
+            <p>
+              Nashville is not immune to these changes. In fact, because of its
+              major tourist industry, Nashville's residential neighborhoods have
+              seen a hightened level of short-term conversions affecting rental
+              supply on a level higher than average for other similar-sized
+              metropolitan areas. Municipalities across the nation are dealing
+              with this influx of short-term rentals in various ways depending
+              on many factors related to the nature of the city itself. In order
+              to address the affordability as well as supply of rental
+              properties for the city's inhabitants, this map seeks to
+              contextualize the current occupancy rate in relation to the influx
+              of available short-term rentals from Airbnb.
+            </p>
+            <p>
+              Click on a block group to see more information about that
+              particular region's Airbnb supply.
+            </p>
+            <hr />
+            Data for this map was provided by the following resources.
+            <ul>
+              <li>
+                <a href="http://insideairbnb.com/get-the-data/"
+                  ><strong>Inside Airbnb</strong></a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://data.census.gov/cedsci/table?q=S2501&tid=ACSST5Y2020.S2501"
+                  ><strong
+                    >US Census Bureau Occupancy Charactersistics Table for
+                    Davidson County, TN</strong
+                  ></a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.census.gov/cgi-bin/geo/shapefiles/index.php"
+                  ><strong>US Census Tiger/Line Shapefiles</strong></a
+                >
+              </li>
+            </ul>
+            <hr />
+          </section>
+        </aside>
+      </section>
+
+      <footer class="row bg-dark text-white py-3">
+        <div class="col">
+          <ul class="list-unstyled">
+            <li>
+              Authored by
+              <a href="https://realcaddish.github.io/">Nathaniel Deaton</a>
+            </li>
+            <li>Created in April, 2022</li>
           </ul>
-          <hr>
-        </section>
-      </aside>
-    </section>
+        </div>
+      </footer>
+    </div>
 
-    <footer class="row bg-dark text-white py-3">
-      <div class="col">
-        <ul class="list-unstyled">
-          <li>Authored by <a href="https://realcaddish.github.io/">Nathaniel Deaton</a></li>
-          <li>Created in April, 2022</li>
-        </ul>
-      </div>
-    </footer>
-  </div>
+    <!-- legend is outside of container-fluid and will be dynamically added to map -->
+    <div class="bg-secondary py-2 px-3 ml-3 mt-3 text-white" id="legend"></div>
 
-  <!-- legend is outside of container-fluid and will be dynamically added to map -->
-  <div class="bg-secondary py-2 px-3 ml-3 mt-3 text-white" id="legend"></div>
+    <!-- ui is outside of container-fluid and will be dynamically added to map -->
+    <div class="form-group mr-3 mt-3" id="dropdown-ui">
+      <label>Choose a data attribute to learn more</label>
+      <select class="form-control bg-secondary text-white">
+        <option value="airbnbs" selected>
+          Airbnbs Per 1,000 Housing Units
+        </option>
+        <option value="occ_percent">%, Housing Units Occupied</option>
+        <option value="vaca_percent">%, Housing Units Vacant</option>
+      </select>
+    </div>
 
-  <!-- ui is outside of container-fluid and will be dynamically added to map -->
-  <div class="form-group mr-3 mt-3" id="dropdown-ui">
-    <label>Choose a data attribute to learn more</label>
-    <select class="form-control bg-secondary text-white">
-      <option value="airbnbs" selected>Airbnbs Per 1,000 Housing Units</option>
-      <option value="occ_percent">%, Housing Units Occupied</option>
-      <option value="vaca_percent">%, Housing Units Vacant</option>
-    </select>
-  </div>
+    <!-- Create a div where the graph will take place -->
+    <div id="my_dataviz"></div>
 
+    <!--Bootstrap CDN-->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+      crossorigin="anonymous"
+    ></script>
+    <!--Leaflet CDN -->
+    <script
+      src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+      integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+      crossorigin=""
+    ></script>
+    <!--D3 library-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.4.4/d3.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
 
-  <!-- Create a div where the graph will take place -->
-  <div id="my_dataviz"></div>
-
-  <!--Bootstrap CDN-->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
-  </script>
-  <!--Leaflet CDN -->
-  <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
-    integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
-    crossorigin=""></script>
-  <!--D3 library-->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.4.4/d3.min.js"></script>
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-
-  <!--topojson-->
-  <script src="https://unpkg.com/topojson@3"></script>
-  <!--jquery CDN -->
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js"
-    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-  <!--simple statistics CDN-->
-  <script src='https://unpkg.com/simple-statistics@7.7.5/dist/simple-statistics.min.js'></script>
-  <!--Turf.js CDN-->
-  <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
-</body>
-<script type="module" src="./js/main.js"></script>
-
+    <!--topojson-->
+    <script src="https://unpkg.com/topojson@3"></script>
+    <!--jquery CDN -->
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"
+    ></script>
+    <!--simple statistics CDN-->
+    <script src="https://unpkg.com/simple-statistics@7.7.5/dist/simple-statistics.min.js"></script>
+    <!--Turf.js CDN-->
+    <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+  </body>
+  <script type="module" src="./js/main.js"></script>
 </html>
