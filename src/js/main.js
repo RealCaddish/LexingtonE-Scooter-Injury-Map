@@ -4,7 +4,7 @@ const options = {
   center: [38.04696, -84.507469],
   zoom: 11,
   minZoom: 2,
-  maxZoom: 13,
+  maxZoom: 17,
 };
 
 // creating the map object
@@ -37,13 +37,13 @@ Promise.all([collisionCountRoads, bicycle_points, scooter_points, all_points]).t
 // start of drawing Map function
 function drawMap(data) {
   // display Carto basemap tiles with light features and labels
-  const tiles = L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    {
-      maxZoom: 19,
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }
+  const tiles = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}{r}.{ext}', {
+    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    subdomains: 'abcd',
+    minZoom: 0,
+    maxZoom: 20,
+    ext: 'png'
+  }
   );
 
   // add basemap tiles to map
@@ -82,15 +82,47 @@ function drawMap(data) {
     color: "black",
     weight: 2,
     opacity: 0.8,
-    fillOpacity: 0.3,
+    fillOpacity: 0.8,
   };
 
 
-  ////// Adding data as geojson to maps //////
+  var collisionLineOptions = {
+    color: 'grey',
+    weight: '1.5',
+    opacity: '.1',
+    fillOpacity: '.3'
+  };
+
+  // color function for road choropleth 
+  function getColor(d) {
+    return d > 9 ? '#f2f0f7':
+           d > 6 ? '#dadaeb':
+           d > 5 ? '#bcbddc':
+           d > 4 ? '#9e9ac8':
+           d > 3 ? '#807dba':
+           d > 2 ? '#6a51a3':
+           d > 1  ? '#4a1486':
+                      '#f7f7f7';
+  }; 
+
+  // define function for GeoJson layer so that its fillColor depends on
+  function style(feature) {
+
+    return {
+        fillColor: getColor(feature.properties.total_NUMPOINTS),
+        weight: 2,
+        color: getColor(feature.properties.total_NUMPOINTS),
+        fillOpacity: .9,
+        stroke: false
+    };
+}  
+////// Adding data as geojson to maps //////
 
   // Roads //
   // constructs a variable to store geojson and add to map
-  var collisionRoads = L.geoJson(collisionRoadsGeoJSON, {}).addTo(map);
+  var collisionRoads = L.geoJson(collisionRoadsGeoJSON, {
+    style: style
+  }).addTo(map);
 
   // print to check
   console.log(collisionCountRoads);
@@ -101,6 +133,17 @@ function drawMap(data) {
     pointToLayer: function (bicycle_points, latlng) {
       return L.circleMarker(latlng);
     },
+    onEachFeature: function(feature, layer) {
+      const props = feature.properties
+      console.log(props)
+      const popup = `<h3><u>${props['DIRECTIONA']}</h3>
+                         <img src='${props["Image File Path"]}' width='100%'><br>
+                         <!-- Button trigger modal -->
+                          <a href='#' data-toggle="modal" data-target="#${props["modalID"]}">
+                            Click to learn about ${props["Site Name"]}!
+                          </a>`
+        layer.bindPopup(popup)
+    }
   })
     .setStyle(bikeMarkerOptions)
 
@@ -140,9 +183,13 @@ var points = {
   "Scooter Collisions": collisionScooters
 };
 
+///////////////// pop-ups //////////////////////
+
+
+// create a popup for bicycles
 
   // add the scooter/bicycle collision points to one layer group
- L.control.layers(points, {collapsed:false}).addTo(map);
+ L.control.layers(points).addTo(map);
 
 
 

@@ -102,3 +102,7 @@ svg {
 dropdown-ui {
   font-family: 'Montserrat', sans-serif;
 }
+
+.lanes {
+  color: 'yellow'
+}
