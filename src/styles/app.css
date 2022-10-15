@@ -63,7 +63,7 @@ p {
 
 /*Legend specific*/
 .legend {
-  padding: 6px 8px;
+  padding: 9px 12px;
   font: 14px Arial, Helvetica, sans-serif;
   background: white;
   background: rgba(255, 255, 255, 0.8);
@@ -97,7 +97,53 @@ p {
   background-color: rgba(255, 255, 255, 1);
 }
 
-#button-fly-nash {
+
+/* circle symbol for legend */
+
+#circle {
+  width: 100px;
+  height: 100px;
+  opacity: .5;
+  background: rgb(0, 0, 0);
+  border-radius: 50%;
+  transform: scale(0.1)
+
+}
+
+/* hexagonal symbol and pseudoclasses */
+#hexagon {
+  width: 100px;
+  height: 57.735px;
+  background: #FFEDA0;
+  position: relative;
+  transform: scale(0.3);
+  outline: black
+}
+#hexagon::before {
+  content: "";
+  position: absolute;
+  top: -28.8675px;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 50px solid transparent;
+  border-right: 50px solid transparent;
+  border-bottom: 28.8675px solid #FFEDA0;
+}
+#hexagon::after {
+  content: "";
+  position: absolute;
+  bottom: -28.8675px;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 50px solid transparent;
+  border-right: 50px solid transparent;
+  border-top: 28.8675px solid #FFEDA0;
+
+}
+  
+button-fly-nash {
   font-family: 'Montserrat', sans-serif;
   font-size: 85%;
   color: white;

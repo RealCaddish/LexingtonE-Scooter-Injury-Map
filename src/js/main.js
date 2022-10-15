@@ -121,7 +121,7 @@ function drawMap(data) {
   // constructs a variable to store geojson and add to map
   var collisionRoads = L.geoJson(collisionRoadsGeoJSON, {
     style: style
-  }).addTo(map);
+  }).bringToFront().addTo(map);
 
   // print to check
   console.log(collisionCountRoads);
@@ -138,12 +138,18 @@ function drawMap(data) {
     onEachFeature: function(feature, layer) {
       const props = feature.properties
       console.log(props)
-      const popup = `<h3><u>${props['DIRECTIONA']}</h3>  ///// Popup information //////////////
-                         <img src='${props["Image File Path"]}' width='100%'><br>
-                         <!-- Button trigger modal -->
-                          <a href='#' data-toggle="modal" data-target="#${props["modalID"]}">
-                            Click to learn about ${props["Site Name"]}!
-                          </a>`
+      const popup = `<h3>${props['DIRECTIONA']}</h3><hr>
+      <li> When: at <strong> ${props['TIME']}</strong> on <strong>${props['DATE']} </strong></li>
+      <li> Where: <strong> Intersection of ${props['INTERSECTI']} & ${props['ROADWAY']} </strong></li>
+      <li> Manner of accident: <strong>${props['MANNER']}</strong></li>
+      <li> Hit and Run? : <strong> ${props['H&R']} </strong></li>
+      <li> Number of involved parties: <strong> ${props ['#UNITS']} </strong></li><hr>
+      <li> Injured: <strong>${props['#INJURED']}</strong></li>
+      <li> Killed: <strong> ${props['#KILL']}</strong></li>
+      <li> Injured: <strong>${props['#INJURED']}</strong></li>
+      <li> Injured: <strong> ${props['#INJURED']}</strong></li>
+      <li> Injured: <strong> ${props['#INJURED']}</strong></li>
+      `
                           // bind popup below and add click/mouseover affordances
         layer.bindPopup(popup)
         layer.on('click', function (e) {
@@ -162,6 +168,8 @@ function drawMap(data) {
     },
   })
     .setStyle(bikeMarkerOptions)
+
+    console.log(collisionBicycles);
 
   // Scooter points //
   // constructs a variable to store geojson and add to map
@@ -183,8 +191,6 @@ function drawMap(data) {
                       <li> Injured: <strong>${props['#INJURED']}</strong></li>
                       <li> Injured: <strong> ${props['#INJURED']}</strong></li>
                       <li> Injured: <strong> ${props['#INJURED']}</strong></li>
-        
-
                       `
         layer.bindPopup(popup)
         layer.on('click', function(e) {
@@ -390,13 +396,16 @@ var legend = L.control({ position: "bottomright" });
 
 legend.onAdd = function(map) {
   var div = L.DomUtil.create("div", "legend");
-  div.innerHTML += "<h4>TEST</h4>";
-  div.innerHTML += '<i style="background: #477AC2"></i><span>Water</span><br>';
-  div.innerHTML += '<i style="background: #448D40"></i><span>Forest</span><br>';
-  div.innerHTML += '<i style="background: #E6E696"></i><span>Land</span><br>';
-  div.innerHTML += '<i style="background: #E8E6E0"></i><span>Residential</span><br>';
-  div.innerHTML += '<i style="background: #FFFFFF"></i><span>Ice</span><br>';
-  div.innerHTML += '<i class="icon" style="background-image: url(https://d30y9cdsu7xlg0.cloudfront.net/png/194515-200.png);background-repeat: no-repeat;"></i><span>Grænse</span><br>';
+  div.innerHTML += "<h4>Legend</h4><hr>";
+  div.innerHTML += "<strong>Collision Points<br>"
+  div.innerHTML += '<i id = circle></i><span>All Collisions</span><br>';
+  div.innerHTML += '<i id = circle></i><span>Bicycle Collisions</span><br>';
+  div.innerHTML += '<i id = circle></i><span>E-Scooter Collisions</span><br><hr>';
+  div.innerHTML += '<strong>Choropleth Density # of Collisions <br>'
+  div.innerHTML += '<i id = hexagon></i><span>0 Collisions </span><br>';
+  div.innerHTML += '<i id = hexagon></i><span>1 ─  2 Collisions </span><br>';
+  div.innerHTML += '<i  id= hexagon></i><span>3 ─  4 Collisions <br>';
+  div.innerHTML += '<i  id= hexagon></i><span> > 5 Collisions <br>';
   
   
 
