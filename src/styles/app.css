@@ -1,8 +1,6 @@
 body {
-  background: rgba(211, 210, 208, 0.692);
-  font-family: 'Open Sans', sans-serif;
-  font-weight: 400;
-  opacity: 40;
+ height: 100%;
+ width: 100%;
 }
 
 .col {
@@ -29,9 +27,21 @@ p {
 }
 
 #map {
-  height: 80vh;
-  background: hsl(256, 22%, 47%);
+  height: 100%;
+  width: 100%;
+  padding: 20px; 
 }
+
+.popup {
+    border-radius: 2px;
+    color: #504e4e;
+    font-family: 'Molengo', sans-serif;
+    font-size: 12px;
+    line-height: 10px;
+    height: 10 px ;
+    max-height: 300px;
+  }
+
 
 /* #legend {
   font-family: 'Montserrat', sans-serif;
@@ -61,41 +71,41 @@ p {
   clear: both;
 } */
 
-/*Legend specific*/
+/* Legend specific
 .legend {
-  padding: 9px 12px;
+  padding: 6px 9px;
   font: 14px Arial, Helvetica, sans-serif;
   background: white;
   background: rgba(255, 255, 255, 0.8);
-  /*box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);*/
-  /*border-radius: 5px;*/
-  line-height: 24px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+  line-height: 10px;
   color: #555;
 }
 .legend h4 {
   text-align: center;
-  font-size: 16px;
+  font-size: 14px;
   margin: 2px 12px 8px;
   color: #777;
 }
 
 .legend span {
   position: relative;
-  bottom: 3px;
+  bottom: 1px;
 }
 
 .legend i {
-  width: 18px;
-  height: 18px;
+  width: 12px;
+  height: 12px;
   float: left;
   margin: 0 8px 0 0;
   opacity: 0.7;
 }
 
 .legend i.icon {
-  background-size: 18px;
+  background-size: 8px;
   background-color: rgba(255, 255, 255, 1);
-}
+} */
 
 
 /* circle symbol for legend */

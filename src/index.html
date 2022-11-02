@@ -41,7 +41,7 @@
   </head>
 
   <body>
-    <div class="container-fluid">
+    <!-- <div class="container-fluid">
       <header class="row bg-dark text-white py-3">
         <div class="col">
           <h1>Lexington Bicycle & E-Scooter Incidents Map</h1>
@@ -49,84 +49,101 @@
       </header>
 
       <section class="row">
-        <div class="col-md-8 col-lg-9 col-xl-10 order-md-2 px-0">
-          <div id="map"></div>
-          <div class="pure-button-group">
-            <button class="pure-button" id="button-fly-nash">
-              Back to County View
-            </button>
-          </div>
-        </div>
-        <aside
+        <div class="col-md-8 col-lg-9 col-xl-10 order-md-2 px-0"> -->
+          <div id="map">
+                <!-- legend is outside of container-fluid and will be dynamically added to map -->
+    <div class="bg-secondary py-2 px-3 ml-3 mt-3 text-white" id="legend"></div>
+            <aside
           id="about"
           class="col-md-4 col-lg-3 col-xl-2 order-md-1 text-white py-2 pl-3 bg-secondary overflow-auto"
         >
+          
+        </div>
+        
           <section>
+            <div class="pure-button-group">
+              <button class="pure-button" id="button-fly-nash">
+                Back to County View
+              </button>
+            </div>
             <h3 class="py-2">
-              Which areas of Lexington are prone to e-scooter and bicycle
-              injuries?
+              A Tale of Two Injuries: Comparing E-Scooter & Bicycle Injuries in Lexington, KY from 2018 - 2022
             </h3>
 
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.
+              The recent proliferation of electronically charged scooter rentals in metropolitan areas nationwide has become an increasing concern since 2017. 
+              Many e-scooter companies have come into the market in recent years. E-scooter brands such as Lime, Bird, and others, often litter the streets with 
+              with e-scooters outfitted with GPS tracking devices and can zoom down sidewalks around 15 mph (25 kph). Users can track the scooters and pay 
+              on a credit card machine attached to the handlebars of the unit. This has caused an increase in police reports taken in relation
+              to injuries caused by or involved with e-scooters.
             </p>
-            <!-- <div style="text-align: center">
-            <h3> Prices Bar Chart</h3>
-            <div id="d3-container">
-            </div>
-          </div> -->
+            <p><strong> Above, purple lines indicate roads with high densities of accidents for both scooters and bicycles. Click on the layers tab
+              on the right to view more about e-scooter and bicycle injuries directly. A hexagonal grid was created for both e-scooter and bicycle injuries
+              to better understand where the density of these reports take place. Downtown seems to be a hot spot for sure. Feel free to click on 
+              individual points to learn more about the details of the police report individually. </strong>
+          </p>
+            <p>
+              Since 2018, the city of Lexington in Fayette County, KY granted E-scooter companies to market to the city and offer these scooters 
+              countywide. Lime and Bird contract employees often pick up these scooters when GPS tracking devices signal that their battery is low. 
+              After much campaigning, cities such as Lexington often grant these companies with permissions to operate. Based on the assumption that 
+              some form of job creation is derived as well as taxes on rides, many of these companies are often viewed in a positive light and operate in
+              many populated places nationwide.  
+            </p>
+            <p>
+              This has gotten me to wonder - how do e-scooter injuries compare with bicycyle injuries? And even more, how do e-scooter injury reports
+              shape up next to those for bicycles? Due to the recent onset of e-scooter companies, making these types of comparisons become all the more important.
 
-            <p>
-              Nashville is not immune to these changes. In fact, because of its
-              major tourist industry, Nashville's residential neighborhoods have
-              seen a hightened level of short-term conversions affecting rental
-              supply on a level higher than average for other similar-sized
-              metropolitan areas. Municipalities across the nation are dealing
-              with this influx of short-term rentals in various ways depending
-              on many factors related to the nature of the city itself. In order
-              to address the affordability as well as supply of rental
-              properties for the city's inhabitants, this map seeks to
-              contextualize the current occupancy rate in relation to the influx
-              of available short-term rentals from Airbnb.
+            </p>
+            <p> 
+              After contacting the Lexington Police Department, I was able to collect data and represent the point locations where police reports
+              were filed related to e-scooters and bicycle injuries independently. It's necesarry to take note that these point locations are aggregated to the 
+              nearest intersection. Sometimes, accidents took place at intersections, but in order to protect the privacy of homes and involved parties, 
+              the majority of points locations are relative to nearest intersections. This doesn't change the fact that these point locations don't have some sort of
+              geographic value. For example, if we look at a chart comprising the density of e-scooter incidents, we can see that they occur most often along
+              Tates Creek, Broadway, and Versailles Road primarily.   
+              <img src="../python/scooter_collisions_by_street.jpeg">
             </p>
             <p>
-              Click on a block group to see more information about that
-              particular region's Airbnb supply.
+              On the other hand, I've  found that bicycle injuries are more common on New Circle than Tates Creek, but Broadway has the same amount of
+              injuries from both since 2018. All of the highest injury-prone streets in Lexington share something in common - they're all over 55 mph zones.
+              We can quickly determine that faster roads are much more dangerous than some other factor such as one way streets and perhaps busy intersections. 
+              <img src="../python/bicycle_collisions_by_street.jpeg">
             </p>
-            <hr />
-            Data for this map was provided by the following resources.
+            <p> 
+              More should be done to look into the relationship between bicycle and e-scooter injury reports. Other factors that were found include 
+              that most injuries occur on clear sunny days, hit and runs make up 1/3 of all reported bicycle injuries, and interestingly enough, the
+              vast majority of motorized scooter injury reports are involved with a bicycle at an intersection or non intersection. In other words, hardly
+              any cars are involved with e-scooter injuries. This should be noted for any cyclists in the city aware of the danger that e-scooters impose. 
+           
+           <img src="../python/motorized_Scooter_collision_types.jpeg"> </p>
+            <p>
+              Perhaps e-scooter companies are working to find solutions to this issue, but for now, we can only look more into the situation and 
+              see where e-scooter and bicycle injuries overlap or differ. 
+            </p>
+
+            Data for this map was provided by the <a href="https://www.lexingtonky.gov/departments/police"> Lexington KY Police Department</a>
             <ul>
+              Other useful sites to consider reading more about the issue be
               <li>
-                <a href="http://insideairbnb.com/get-the-data/"
-                  ><strong>Inside Airbnb</strong></a
+                <a href="https://wlos.com/news/ask-13/are-electric-scooters-still-banned-in-asheville"
+                  ><strong>City Dumps Bird in Asheville, NC</strong></a
                 >
               </li>
               <li>
-                <a
-                  href="https://data.census.gov/cedsci/table?q=S2501&tid=ACSST5Y2020.S2501"
-                  ><strong
-                    >US Census Bureau Occupancy Charactersistics Table for
-                    Davidson County, TN</strong
-                  ></a
-                >
+                <a href="https://www.usnews.com/news/health-news/articles/2022-10-10/big-rise-in-e-scooter-injuries-among-u-s-kids#:~:text=For%20the%20study%2C%20Hayward's%20team,skull%20fractures%20and%20internal%20bleeding.">
+                    <strong>US News & World Report: Big Rise in E-Scooter Injuries Among US Kids</strong></a>
               </li>
               <li>
                 <a
-                  href="https://www.census.gov/cgi-bin/geo/shapefiles/index.php"
-                  ><strong>US Census Tiger/Line Shapefiles</strong></a
+                  href="https://www.cpsc.gov/Newsroom/News-Releases/2021/Injuries-Using-E-Scooters-E-Bikes-and-Hoverboards-Jump-70-During-the-Past-Four-Years"
+                  ><strong>Injuries Using E-Scooter, E-Bikes, and Hoverboards Jump 70 During Past Four Years</strong></a
                 >
               </li>
             </ul>
             <hr />
           </section>
         </aside>
-      </section>
+      <!-- </section> -->
 
       <footer class="row bg-dark text-white py-3">
         <div class="col">
@@ -141,9 +158,6 @@
       </footer>
     </div>
 
-    <!-- legend is outside of container-fluid and will be dynamically added to map -->
-    <div class="bg-secondary py-2 px-3 ml-3 mt-3 text-white" id="legend"></div>
-
     <!-- ui is outside of container-fluid and will be dynamically added to map -->
     <div class="form-group mr-3 mt-3" id="dropdown-ui">
       <label>Choose a data attribute to learn more</label>
@@ -155,6 +169,7 @@
         <option value="vaca_percent">%, Housing Units Vacant</option>
       </select>
     </div>
+  </div>
 
     <!-- Create a div where the graph will take place -->
     <div id="my_dataviz"></div>

@@ -27,9 +27,13 @@ const all_points = d3.json("../data/shp/all_collision_points.geojson");
 const hex_grid = d3.json("../data/geojson/selected_collisions_hex.geojson");
 
 // promise statement to call an array of data variables then proceed to mapping function
-Promise.all([collisionCountRoads, bicycle_points, scooter_points, all_points, hex_grid]).then(
-  drawMap
-);
+Promise.all([
+  collisionCountRoads,
+  bicycle_points,
+  scooter_points,
+  all_points,
+  hex_grid,
+]).then(drawMap);
 
 // set global variables for map layer
 // mapped attribute, and normalizing attribute
@@ -39,11 +43,15 @@ Promise.all([collisionCountRoads, bicycle_points, scooter_points, all_points, he
 // start of drawing Map function
 function drawMap(data) {
   // display Carto basemap tiles with light features and labels
-  const tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 20
-  });
+  const tiles = L.tileLayer(
+    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+    {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: "abcd",
+      maxZoom: 20,
+    }
+  );
 
   // add basemap tiles to map
   tiles.addTo(map);
@@ -63,6 +71,7 @@ function drawMap(data) {
     weight: 2,
     opacity: 0.8,
     fillOpacity: 0.3,
+    offset: [0, -30]
   };
 
   // scooter accident circle options
@@ -73,10 +82,11 @@ function drawMap(data) {
     weight: 2,
     opacity: 0.8,
     fillOpacity: 0.3,
+    offset: [0, -30]
   };
 
-   // scooter accident circle options
-   var allCircleOptions = {
+  // scooter accident circle options
+  var allCircleOptions = {
     radius: 5,
     fillColor: "grey",
     color: "black",
@@ -85,47 +95,54 @@ function drawMap(data) {
     fillOpacity: 0.8,
   };
 
-
   var collisionLineOptions = {
-    color: 'grey',
-    weight: '1.5',
-    opacity: '.1',
-    fillOpacity: '.3'
+    color: "grey",
+    weight: "1.5",
+    opacity: ".1",
+    fillOpacity: ".3",
   };
 
-  // color function for road choropleth 
+  // color function for road choropleth
   function getColor(d) {
-    return d > 9 ? '#f2f0f7':
-           d > 6 ? '#dadaeb':
-           d > 5 ? '#bcbddc':
-           d > 4 ? '#9e9ac8':
-           d > 3 ? '#807dba':
-           d > 2 ? '#6a51a3':
-           d > 1  ? '#4a1486':
-                      '#f7f7f7';
-  }; 
+    return d > 9
+      ? "#f2f0f7"
+      : d > 6
+      ? "#dadaeb"
+      : d > 5
+      ? "#bcbddc"
+      : d > 4
+      ? "#9e9ac8"
+      : d > 3
+      ? "#807dba"
+      : d > 2
+      ? "#6a51a3"
+      : d > 1
+      ? "#4a1486"
+      : "#f7f7f7";
+  }
 
   // define function for GeoJson layer so that its fillColor depends on
   function style(feature) {
     return {
-        fillColor: getColor(feature.properties.total_NUMPOINTS),
-        weight: 2,
-        color: getColor(feature.properties.total_NUMPOINTS),
-        fillOpacity: .9,
-        stroke: false
+      fillColor: getColor(feature.properties.total_NUMPOINTS),
+      weight: 2,
+      color: getColor(feature.properties.total_NUMPOINTS),
+      fillOpacity: 0.9,
+      stroke: false,
     };
-}  
-////// Adding data as geojson to maps //////
+  }
+  ////// Adding data as geojson to maps //////
   // Roads //
 
   // constructs a variable to store geojson and add to map
   var collisionRoads = L.geoJson(collisionRoadsGeoJSON, {
-    style: style
-  }).bringToFront().addTo(map);
+    style: style,
+  })
+    .bringToFront()
+    .addTo(map);
 
   // print to check
   console.log(collisionCountRoads);
-
 
   // Bicycle Points //
 
@@ -135,41 +152,40 @@ function drawMap(data) {
       return L.circleMarker(latlng).bringToFront();
     },
     // return feature and layer, grab properties, make popup template
-    onEachFeature: function(feature, layer) {
-      const props = feature.properties
-      console.log(props)
-      const popup = `<h3>${props['DIRECTIONA']}</h3><hr>
-      <li> When: at <strong> ${props['TIME']}</strong> on <strong>${props['DATE']} </strong></li>
-      <li> Where: <strong> Intersection of ${props['INTERSECTI']} & ${props['ROADWAY']} </strong></li>
-      <li> Manner of accident: <strong>${props['MANNER']}</strong></li>
-      <li> Hit and Run? : <strong> ${props['H&R']} </strong></li>
-      <li> Number of involved parties: <strong> ${props ['#UNITS']} </strong></li><hr>
-      <li> Injured: <strong>${props['#INJURED']}</strong></li>
-      <li> Killed: <strong> ${props['#KILL']}</strong></li>
-      <li> Injured: <strong>${props['#INJURED']}</strong></li>
-      <li> Injured: <strong> ${props['#INJURED']}</strong></li>
-      <li> Injured: <strong> ${props['#INJURED']}</strong></li>
-      `
-                          // bind popup below and add click/mouseover affordances
-        layer.bindPopup(popup)
-        layer.on('click', function (e) {
-          map.flyTo(e.latlng, 17)
-        })
-        layer.on('mouseover', function() {
+    onEachFeature: function (feature, layer) {
+      const props = feature.properties;
+      console.log(props);
+      const popup = `<h3>${props["DIRECTIONA"]}</h3><hr>
+      <li> When: at <strong> ${props["TIME"]}</strong> on <strong>${props["DATE"]} </strong></li>
+      <li> Where: <strong> Intersection of ${props["INTERSECTI"]} & ${props["ROADWAY"]} </strong></li>
+      <li> Manner of accident: <strong>${props["MANNER"]}</strong></li>
+      <li> Hit and Run? : <strong> ${props["H&R"]} </strong></li>
+      <li> Number of involved parties: <strong> ${props["#UNITS"]} </strong></li><hr>
+      <li> Injured: <strong>${props["#INJURED"]}</strong></li>
+      <li> Killed: <strong> ${props["#KILL"]}</strong></li>
+      <li> Injured: <strong>${props["#INJURED"]}</strong></li>
+      <li> Injured: <strong> ${props["#INJURED"]}</strong></li>
+      <li> Injured: <strong> ${props["#INJURED"]}</strong></li>
+      `;
+      // bind popup below and add click/mouseover affordances
+      layer.bindPopup(popup);
+      layer.on("click", function (e) {
+        map.flyTo(e.latlng, 17);
+      });
+      layer.on("mouseover", function () {
+        this.setStyle({
+          color: "yellow",
+        });
+      }),
+        layer.on("mouseout", function () {
           this.setStyle({
-            color: 'yellow'
-          })
-        }),
-        layer.on('mouseout', function() {
-          this.setStyle({
-            color: 'blue'
+            color: "blue",
           });
-        })
+        });
     },
-  })
-    .setStyle(bikeMarkerOptions)
+  }).setStyle(bikeMarkerOptions);
 
-    console.log(collisionBicycles);
+  console.log(collisionBicycles);
 
   // Scooter points //
   // constructs a variable to store geojson and add to map
@@ -177,30 +193,29 @@ function drawMap(data) {
     pointToLayer: function (scooter_points, latlng) {
       return L.circleMarker(latlng);
     },
-    onEachFeature: function(feature, layer) {
-      const props = feature.properties
+    onEachFeature: function (feature, layer) {
+      const props = feature.properties;
       //console.log(props)
-      const popup = `<h3>${props['Direction']}</h3><hr>
-                      <li> When: at <strong> ${props['TIME']}</strong> on <strong>${props['DATE']} </strong></li>
-                      <li> Where: <strong> Intersection of ${props['INTERSECTI']} & ${props['ROADWAY']} </strong></li>
-                      <li> Manner of accident: ${props['MANNER']}
-                      <li> Hit and Run? : <strong> ${props['HitAndRun']} </strong></li>
-                      <li> Number of involved parties: <strong> ${props ['#UNITS']} </strong></li><hr>
-                      <li> Injured: <strong>${props['Injured']}</strong></li>
-                      <li> Killed: <strong> ${props['Killed']}</strong></li>
-                      <li> Injured: <strong>${props['#INJURED']}</strong></li>
-                      <li> Injured: <strong> ${props['#INJURED']}</strong></li>
-                      <li> Injured: <strong> ${props['#INJURED']}</strong></li>
-                      `
-        layer.bindPopup(popup)
-        layer.on('click', function(e) {
-          map.flyTo(e.latlng, 17);
-        })
+      const popup = `<h3>${props["Direction"]}</h3><hr>
+                      <li> When: at <strong> ${props["TIME"]}</strong> on <strong>${props["DATE"]} </strong></li>
+                      <li> Where: <strong> Intersection of ${props["INTERSECTI"]} & ${props["ROADWAY"]} </strong></li>
+                      <li> Manner of accident: ${props["MANNER"]}
+                      <li> Hit and Run? : <strong> ${props["HitAndRun"]} </strong></li>
+                      <li> Number of involved parties: <strong> ${props["#UNITS"]} </strong></li><hr>
+                      <li> Injured: <strong>${props["Injured"]}</strong></li>
+                      <li> Killed: <strong> ${props["Killed"]}</strong></li>
+                      <li> Injured: <strong>${props["#INJURED"]}</strong></li>
+                      <li> Injured: <strong> ${props["#INJURED"]}</strong></li>
+                      <li> Injured: <strong> ${props["#INJURED"]}</strong></li>
+                      `;
+      layer.bindPopup(popup);
+      layer.on("click", function (e) {
+        map.flyTo(e.latlng, 17);
+      });
     },
-  })
-    .setStyle(scooterMarkerOptions);
+  }).setStyle(scooterMarkerOptions);
 
-  console.log(collisionScooters)
+  console.log(collisionScooters);
 
   // print to check
   //console.log(collisionScooters);
@@ -211,215 +226,219 @@ function drawMap(data) {
     pointToLayer: function (all_points, latlng) {
       return L.circleMarker(latlng);
     },
-  })
-  .setStyle(allCircleOptions);
+  }).setStyle(allCircleOptions);
 
   // print to check
   //console.log(allCollisions)
 
-
   // style function for hex grids
   function hexColor(d) {
-  return  d > 6  ? '#BD0026' :
-    d > 5  ? '#E31A1C' :
-    d > 4  ? '#FC4E2A' :
-    d > 3   ? '#FD8D3C' :
-    d > 2   ? '#FEB24C' :
-    d > 1   ? '#FED976' :
-               '#FFEDA0';
-};
+    return d > 6
+      ? "#BD0026"
+      : d > 5
+      ? "#E31A1C"
+      : d > 4
+      ? "#FC4E2A"
+      : d > 3
+      ? "#FD8D3C"
+      : d > 2
+      ? "#FEB24C"
+      : d > 1
+      ? "#FED976"
+      : "#FFEDA0";
+  }
 
+  // style function for hex grids
+  function hexColorScooters(d) {
+    return d > 5
+      ? "#BD0026"
+      : d > 4
+      ? "#E31A1C"
+      : d > 3
+      ? "#FC4E2A"
+      : d > 2
+      ? "#FD8D3C"
+      : d > 1
+      ? "#FEB24C"
+      : "#FFEDA0";
+  }
 
-// style function for hex grids
-function hexColorScooters(d) {
-  return  d > 5  ? '#BD0026' :
-    d > 4  ? '#E31A1C' :
-    d > 3   ? '#FC4E2A' :
-    d > 2   ? '#FD8D3C' :
-    d > 1   ? '#FEB24C' :
-               '#FFEDA0';
-};
-
-
-// Hex styles for all collisions, scooters, and bicycles
-// hex for all collisions style
-function hexStyle(feature) {
-  return {
+  // Hex styles for all collisions, scooters, and bicycles
+  // hex for all collisions style
+  function hexStyle(feature) {
+    return {
       fillColor: hexColor(feature.properties.all_NUMPOINTS),
       weight: 2,
       opacity: 1,
-      color: 'black',
+      color: "black",
       fillOpacity: 0.5,
-      stroke: 4
-  };
-};
-// hex for scooters style
-function hexStyleScooter(feature) {
-  return {
+      stroke: 4,
+    };
+  }
+  // hex for scooters style
+  function hexStyleScooter(feature) {
+    return {
       fillColor: hexColorScooters(feature.properties.NUMPOINTS),
       weight: 2,
       opacity: 1,
-      color: 'black',
+      color: "black",
       fillOpacity: 0.5,
-      stroke: 4
-  };
-};
-// hex for bicycles count style
-function hexStyleBicycle(feature) {
-  return {
+      stroke: 4,
+    };
+  }
+  // hex for bicycles count style
+  function hexStyleBicycle(feature) {
+    return {
       fillColor: hexColorScooters(feature.properties.Bicycle_NUMPOINTS),
       weight: 2,
       opacity: 1,
-      color: 'black',
+      color: "black",
       fillOpacity: 0.5,
-      stroke: 4
-  };
-};
+      stroke: 4,
+    };
+  }
 
   // load hex density of all collisions
   var hex = L.geoJson(hexGridGeoJSON, {
-    pointToLayer: function(hex_grid, latlng) {
-      return L.polygon(latlng, {color: 'red'})
+    pointToLayer: function (hex_grid, latlng) {
+      return L.polygon(latlng, { color: "red" });
     },
     style: hexStyle,
-    onEachFeature: function(feature, layer) {
-      const props = feature.properties
+    onEachFeature: function (feature, layer) {
+      const props = feature.properties;
       //console.log(props)
-      const popup = `<h3> Number of all collisions: <strong>${props['all_NUMPOINTS']}</h3>`
+      const popup = `<h3> Number of all collisions: <strong>${props["all_NUMPOINTS"]}</h3>`;
 
-        layer.bindPopup(popup)
-        layer.on('mouseover', function() {
+      layer.bindPopup(popup);
+      layer.on("mouseover", function () {
+        this.setStyle({
+          color: "yellow",
+        });
+      }),
+        layer.on("mouseout", function () {
           this.setStyle({
-            color: 'yellow'
-          })
-        }),
-        layer.on('mouseout', function() {
-          this.setStyle({
-            color: 'black'
+            color: "black",
           });
-        })
+        });
     },
   });
 
-  console.log(hex)
+  console.log(hex);
 
-// load hexagon density of scooters 
+  // load hexagon density of scooters
   var hexScooters = L.geoJson(hexGridGeoJSON, {
-    pointToLayer: function(hex_grid, latlng) {
-      return L.polygon(latlng, {color: 'red'})
+    pointToLayer: function (hex_grid, latlng) {
+      return L.polygon(latlng, { color: "red" });
     },
     style: hexStyleScooter,
-    onEachFeature: function(feature, layer) {
-      const props = feature.properties
+    onEachFeature: function (feature, layer) {
+      const props = feature.properties;
       //console.log(props)
-      const popup = `<h3> Number of scooter collisions: <strong>${props['NUMPOINTS']}</h3>`
-        layer.bindPopup(popup)
-        layer.on('mouseover', function() {
+      const popup = `<h3> Number of scooter collisions: <strong>${props["NUMPOINTS"]}</h3>`;
+      layer.bindPopup(popup);
+      layer.on("mouseover", function () {
+        this.setStyle({
+          color: "yellow",
+        });
+      }),
+        layer.on("mouseout", function () {
           this.setStyle({
-            color: 'yellow'
-          })
-        }),
-        layer.on('mouseout', function() {
-          this.setStyle({
-            color: 'black'
+            color: "black",
           });
-        })
+        });
     },
   });
 
   // load hexagon density of bicycles
   var hexBicycles = L.geoJson(hexGridGeoJSON, {
-    pointToLayer: function(hex_grid, latlng) {
-      return L.polygon(latlng, {color: 'red'})
+    pointToLayer: function (hex_grid, latlng) {
+      return L.polygon(latlng, { color: "red" });
     },
     style: hexStyleBicycle,
-    onEachFeature: function(feature, layer) {
-      const props = feature.properties
+    onEachFeature: function (feature, layer) {
+      const props = feature.properties;
       //console.log(props)
-      const popup = `<h3>Number of bicycle collisions: <strong>${props['Bicycle_NUMPOINTS']}</h3>`
-        layer.bindPopup(popup)
-        layer.on('mouseover', function() {
+      const popup = `<h3>Number of bicycle collisions: <strong>${props["Bicycle_NUMPOINTS"]}</h3>`;
+      layer.bindPopup(popup);
+      layer.on("mouseover", function () {
+        this.setStyle({
+          color: "yellow",
+        });
+      }),
+        layer.on("mouseout", function () {
           this.setStyle({
-            color: 'yellow'
-          })
-        }),
-        layer.on('mouseout', function() {
-          this.setStyle({
-            color: 'black'
+            color: "black",
           });
         }),
-        layer.on('click', function(e) {
+        layer.on("click", function (e) {
           map.flyTo(e.latlng, 15);
-        })
+          map.setView(e.latlng)
+        });
     },
   });
 
-var points = {
-  "All Bicycle/Scooter Collisions": allCollisions,
-  "Bicycle Collisions": collisionBicycles,
-  "Scooter Collisions": collisionScooters,
-  "Hexagonal Density Grid of All Collisions": hex,
-  "Hexagonal Density Grid of Scooter Collisions": hexScooters,
-  "Hexagonal Density Grid of Bicycle Collisions": hexBicycles
-};
-
-  // add the scooter/bicycle collision points to one layer group
- L.control.layers(points).addTo(map);
-
-
-// var for Fayette County coordinates
-var fayetteCoords = [38.035631, -84.498344]
-
- // return to Fayette County bounds on bottom button 
- $('#button-fly-nash').on('click', function() {
-  map.flyTo(fayetteCoords, 12);
- });
-}
-
-// add legend to the map 
-// function addLegend(breaks) {
-  
-//   // create leaflet object to and position top left 
-//   const legendControl = L.control({
-//     position: 'bottomright',
-//   });
-
-//   // when legend is added to map 
-//   legendControl.onAdd = function () {
-    
-//     // select a div element with an id attribute of legend
-//     const legend = L.DomUtil.get('legend');
-
-
-/*Legend specific*/
-var legend = L.control({ position: "bottomright" });
-
-legend.onAdd = function(map) {
-  var div = L.DomUtil.create("div", "legend");
-  div.innerHTML += "<h4>Legend</h4><hr>";
-  div.innerHTML += "<strong>Collision Points<br>"
-  div.innerHTML += '<i id = circle></i><span>All Collisions</span><br>';
-  div.innerHTML += '<i id = circle></i><span>Bicycle Collisions</span><br>';
-  div.innerHTML += '<i id = circle></i><span>E-Scooter Collisions</span><br><hr>';
-  div.innerHTML += '<strong>Choropleth Density # of Collisions <br>'
-  div.innerHTML += '<i id = hexagon></i><span>0 Collisions </span><br>';
-  div.innerHTML += '<i id = hexagon></i><span>1 ─  2 Collisions </span><br>';
-  div.innerHTML += '<i  id= hexagon></i><span>3 ─  4 Collisions <br>';
-  div.innerHTML += '<i  id= hexagon></i><span> > 5 Collisions <br>';
-  
-  
-
-  return div;
-    // disable scroll and click from propogating
-    L.DomEvent.disableScrollPropagation(legend);
-    L.DomEvent.disableClickPropogation(legend);
-
-    // return the selecion to the method
-    return legend; 
+  var points = {
+    "All Bicycle/Scooter Collisions": allCollisions,
+    "Bicycle Collisions": collisionBicycles,
+    "Scooter Collisions": collisionScooters,
+    "Hexagonal Density Grid of All Collisions": hex,
+    "Hexagonal Density Grid of Scooter Collisions": hexScooters,
+    "Hexagonal Density Grid of Bicycle Collisions": hexBicycles,
   };
 
-  // add the empty legend div to the map
-  legend.addTo(map);
+  // add the scooter/bicycle collision points to one layer group
+  L.control.layers(points).addTo(map);
 
-  //select the legend, add title, begin unordered list and assign to variable
- // const legend = $('#legend').html(`<h5> TEST </h5>`)
+  // var for Fayette County coordinates
+  var fayetteCoords = [38.035631, -84.498344];
+
+  // return to Fayette County bounds on bottom button
+  $("#button-fly-nash").on("click", function () {
+    map.flyTo(fayetteCoords, 12);
+  });
+}
+
+
+//  L E G E N D //
+
+// add legend to the map
+function addLegend(breaks) {
+  // create leaflet object to and position top left
+  const legendControl = L.control({
+    position: "bottomright",
+  });
+
+  // when legend is added to map
+  legendControl.onAdd = function () {
+    /*Legend specific*/
+    var legend = L.control({ position: "bottomright" });
+
+    legend.onAdd = function (map) {
+      var div = L.DomUtil.create("div", "legend");
+      div.innerHTML += "<h4>Legend</h4><hr>";
+      div.innerHTML += "<strong>Collision Points<br>";
+      div.innerHTML += "<i id = circle></i><span>All Collisions</span><br>";
+      div.innerHTML += "<i id = circle></i><span>Bicycle Collisions</span><br>";
+      div.innerHTML +=
+        "<i id = circle></i><span>E-Scooter Collisions</span><br><hr>";
+      div.innerHTML += "<strong>Choropleth Density # of Collisions <br>";
+      div.innerHTML += "<i id = hexagon></i><span>0 Collisions </span><br>";
+      div.innerHTML +=
+        "<i id = hexagon></i><span>1 ─  2 Collisions </span><br>";
+      div.innerHTML += "<i  id= hexagon></i><span>3 ─  4 Collisions <br>";
+      div.innerHTML += "<i  id= hexagon></i><span> > 5 Collisions <br>";
+
+      return div;
+      // disable scroll and click from propogating
+      L.DomEvent.disableScrollPropagation(legend);
+      L.DomEvent.disableClickPropogation(legend);
+
+      // return the selecion to the method
+      return legend;
+    };
+
+    // add the empty legend div to the map
+    legend.addTo(map);
+  };
+  addLegend(breaks);
+}
