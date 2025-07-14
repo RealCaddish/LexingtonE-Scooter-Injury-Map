@@ -1,444 +1,118 @@
-// set options for the map object
-const options = {
-  zoomSnap: 0.1,
-  center: [38.04696, -84.507469],
-  zoom: 12,
-  minZoom: 2,
-  maxZoom: 17,
-};
+// main.js: map setup, clustering, legend, and chart updating for scooter collisions only
 
-// creating the map object
-const map = L.map("map", options);
-
-// load in data with d3 fetch
-// const blocksDataRaw = d3.json(
-//   'data/geojson/blocks_census_airbnb_joined.geojson'
-// );
-// const listingsDataRaw = d3.csv('data/csv/listings_cleaned.csv');
-// const listingsGeojson = d3.json('data/geojson/listings_cleaned.geojson');
-
-// const visiblePoints = L.featureGroup().addTo(map);
-// const hiddenPoints = L.featureGroup();
-
-const collisionCountRoads = d3.json("../data/geojson/roads_counts.geojson");
-const bicycle_points = d3.json("../data/shp/all_bicycle_collisions.geojson");
-const scooter_points = d3.json("../data/geojson/scooter_collisions.geojson");
-const all_points = d3.json("../data/shp/all_collision_points.geojson");
-const hex_grid = d3.json("../data/geojson/selected_collisions_hex.geojson");
-
-// promise statement to call an array of data variables then proceed to mapping function
-Promise.all([
-  collisionCountRoads,
-  bicycle_points,
-  scooter_points,
-  all_points,
-  hex_grid,
-]).then(drawMap);
-
-// set global variables for map layer
-// mapped attribute, and normalizing attribute
-// let attributeValue = 'airbnbs';
-// let normValue = 'total_unit_sum';
-
-// start of drawing Map function
-function drawMap(data) {
-  // display Carto basemap tiles with light features and labels
-  const tiles = L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-    {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: "abcd",
-      maxZoom: 20,
+document.addEventListener("DOMContentLoaded", () => {
+  function parseDate(str) {
+    const parts = str.split("/");
+    if (parts.length === 3) {
+      let [m, d, y] = parts;
+      if (y.length === 2) y = "20" + y;
+      return new Date(+y, +m - 1, +d);
     }
-  );
-
-  // add basemap tiles to map
-  tiles.addTo(map);
-
-  // add data after Promise
-  const collisionRoadsGeoJSON = data[0];
-  const collisionBicyclesGeoJSON = data[1];
-  const collisionScootersGeoJSON = data[2];
-  const allCollisionsGeoJSON = data[3];
-  const hexGridGeoJSON = data[4];
-
-  // bicycle accident circle options
-  var bikeMarkerOptions = {
-    radius: 5,
-    fillColor: "grey",
-    color: "black",
-    weight: 2,
-    opacity: 0.8,
-    fillOpacity: 0.3,
-    offset: [0, -30]
-  };
-
-  // scooter accident circle options
-  var scooterMarkerOptions = {
-    radius: 5,
-    fillColor: "grey",
-    color: "black",
-    weight: 2,
-    opacity: 0.8,
-    fillOpacity: 0.3,
-    offset: [0, -30]
-  };
-
-  // scooter accident circle options
-  var allCircleOptions = {
-    radius: 5,
-    fillColor: "grey",
-    color: "black",
-    weight: 2,
-    opacity: 0.8,
-    fillOpacity: 0.8,
-  };
-
-  var collisionLineOptions = {
-    color: "grey",
-    weight: "1.5",
-    opacity: ".1",
-    fillOpacity: ".3",
-  };
-
-  // color function for road choropleth
-  function getColor(d) {
-    return d > 9
-      ? "#f2f0f7"
-      : d > 6
-      ? "#dadaeb"
-      : d > 5
-      ? "#bcbddc"
-      : d > 4
-      ? "#9e9ac8"
-      : d > 3
-      ? "#807dba"
-      : d > 2
-      ? "#6a51a3"
-      : d > 1
-      ? "#4a1486"
-      : "#f7f7f7";
+    return new Date(str);
   }
 
-  // define function for GeoJson layer so that its fillColor depends on
-  function style(feature) {
-    return {
-      fillColor: getColor(feature.properties.total_NUMPOINTS),
-      weight: 2,
-      color: getColor(feature.properties.total_NUMPOINTS),
-      fillOpacity: 0.9,
-      stroke: false,
-    };
-  }
-  ////// Adding data as geojson to maps //////
-  // Roads //
+  const map = L.map("map").setView([38.04696, -84.50747], 12);
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", { attribution: "&copy; OpenStreetMap contributors &copy; CARTO" }).addTo(map);
 
-  // constructs a variable to store geojson and add to map
-  var collisionRoads = L.geoJson(collisionRoadsGeoJSON, {
-    style: style,
-  })
-    .bringToFront()
-    .addTo(map);
+  // Legend & description
+  const legend = L.control({ position: "bottomleft" });
+  legend.onAdd = () => {
+    const div = L.DomUtil.create("div", "map-legend-container leaflet-control");
+    div.innerHTML = `
+      <div class="map-description">This map shows motorized scooter injury incidents in Lexington, Kentucky. Use the date selectors to filter by month and year; the map will update to show incident locations.</div>
+      <div class="legend-title">Legend</div>
+      <div class="legend-item"><span class="legend-color" style="background:red;"></span>Injury</div>
+      <div class="legend-item"><span class="legend-color" style="background:green;"></span>Non-Injury</div>
+    `;
+    return div;
+  };
+  legend.addTo(map);
 
-  // print to check
-  console.log(collisionCountRoads);
+  const injuryCluster = L.markerClusterGroup();
+  const nonInjuryCluster = L.markerClusterGroup();
+  let allFeatures = [];
 
-  // Bicycle Points //
+  // Fetch scooter data
+  fetch("../data/geojson/scooter_collisions.geojson")
+    .then((r) => { if (!r.ok) throw Error(r.status); return r.json(); })
+    .then((data) => {
+      allFeatures = data.features;
 
-  // constructs a variable to store geojson and add to map
-  var collisionBicycles = L.geoJson(collisionBicyclesGeoJSON, {
-    pointToLayer: function (all_points, latlng) {
-      return L.circleMarker(latlng).bringToFront();
-    },
-    // return feature and layer, grab properties, make popup template
-    onEachFeature: function (feature, layer) {
-      const props = feature.properties;
-      console.log(props);
-      const popup = `<h3>${props["DIRECTIONA"]}</h3><hr>
-      <li> When: at <strong> ${props["TIME"]}</strong> on <strong>${props["DATE"]} </strong></li>
-      <li> Where: <strong> Intersection of ${props["INTERSECTI"]} & ${props["ROADWAY"]} </strong></li>
-      <li> Manner of accident: <strong>${props["MANNER"]}</strong></li>
-      <li> Hit and Run? : <strong> ${props["H&R"]} </strong></li>
-      <li> Number of involved parties: <strong> ${props["#UNITS"]} </strong></li><hr>
-      <li> Injured: <strong>${props["#INJURED"]}</strong></li>
-      <li> Killed: <strong> ${props["#KILL"]}</strong></li>
-      <li> Injured: <strong>${props["#INJURED"]}</strong></li>
-      <li> Injured: <strong> ${props["#INJURED"]}</strong></li>
-      <li> Injured: <strong> ${props["#INJURED"]}</strong></li>
-      `;
-      // bind popup below and add click/mouseover affordances
-      layer.bindPopup(popup);
-      layer.on("click", function (e) {
-        map.flyTo(e.latlng, 17);
+      // determine range for month inputs
+      const dates = allFeatures.map((f) => parseDate(f.properties.DATE)).filter((d) => !isNaN(d));
+      const min = new Date(Math.min(...dates));
+      const max = new Date(Math.max(...dates));
+      const toMonth = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      document.getElementById("start-month").min = toMonth(min);
+      document.getElementById("start-month").max = toMonth(max);
+      document.getElementById("start-month").value = toMonth(min);
+      document.getElementById("end-month").min = toMonth(min);
+      document.getElementById("end-month").max = toMonth(max);
+      document.getElementById("end-month").value = toMonth(max);
+
+      // add points
+      allFeatures.forEach((f) => {
+        const injured = f.properties.Injured || 0;
+        const [lng, lat] = f.geometry.coordinates;
+        const m = L.circleMarker([lat, lng], { radius: 6, color: injured ? "red" : "green" }).bindPopup(`Injured: ${injured}`);
+        injured ? injuryCluster.addLayer(m) : nonInjuryCluster.addLayer(m);
       });
-      layer.on("mouseover", function () {
-        this.setStyle({
-          color: "yellow",
-        });
-      }),
-        layer.on("mouseout", function () {
-          this.setStyle({
-            color: "blue",
-          });
-        });
-    },
-  }).setStyle(bikeMarkerOptions);
+      map.addLayer(injuryCluster);
+      map.addLayer(nonInjuryCluster);
 
-  console.log(collisionBicycles);
+      setupChart();
+    })
+    .catch((e) => console.error("Error loading GeoJSON:", e));
 
-  // Scooter points //
-  // constructs a variable to store geojson and add to map
-  var collisionScooters = L.geoJson(collisionScootersGeoJSON, {
-    pointToLayer: function (scooter_points, latlng) {
-      return L.circleMarker(latlng);
-    },
-    onEachFeature: function (feature, layer) {
-      const props = feature.properties;
-      //console.log(props)
-      const popup = `<h3>${props["Direction"]}</h3><hr>
-                      <li> When: at <strong> ${props["TIME"]}</strong> on <strong>${props["DATE"]} </strong></li>
-                      <li> Where: <strong> Intersection of ${props["INTERSECTI"]} & ${props["ROADWAY"]} </strong></li>
-                      <li> Manner of accident: ${props["MANNER"]}
-                      <li> Hit and Run? : <strong> ${props["HitAndRun"]} </strong></li>
-                      <li> Number of involved parties: <strong> ${props["#UNITS"]} </strong></li><hr>
-                      <li> Injured: <strong>${props["Injured"]}</strong></li>
-                      <li> Killed: <strong> ${props["Killed"]}</strong></li>
-                      <li> Injured: <strong>${props["#INJURED"]}</strong></li>
-                      <li> Injured: <strong> ${props["#INJURED"]}</strong></li>
-                      <li> Injured: <strong> ${props["#INJURED"]}</strong></li>
-                      `;
-      layer.bindPopup(popup);
-      layer.on("click", function (e) {
-        map.flyTo(e.latlng, 17);
-      });
-    },
-  }).setStyle(scooterMarkerOptions);
+  let injuryChart, dowChart;
+  function setupChart() {
+    const ctx1 = document.getElementById("injuryChart").getContext("2d");
+    injuryChart = new Chart(ctx1, {
+      type: "line",
+      data: { labels: [], datasets: [{ label: "Avg Injuries", data: [] }] },
+      options: { responsive: true, scales: { x: { title: { display: true, text: "Month" } }, y: { beginAtZero: true, title: { display: true, text: "Avg Injuries" } } } }
+    });
 
-  console.log(collisionScooters);
+    const ctx2 = document.getElementById("dowChart").getContext("2d");
+    dowChart = new Chart(ctx2, {
+      type: "bar",
+      data: { labels: [], datasets: [{ label: "# of Incidents", data: [], backgroundColor: 'rgba(54, 162, 235, 0.6)' }] },
+      options: { responsive: true, scales: { x: { title: { display: true, text: "Day of Week" } }, y: { beginAtZero: true, title: { display: true, text: "Count" } } } }
+    });
 
-  // print to check
-  //console.log(collisionScooters);
+    ["start-month", "end-month"].forEach((id) => document.getElementById(id).addEventListener("change", updateChart));
+    document.getElementById("cluster-injury").addEventListener("change", (e) => e.target.checked ? map.addLayer(injuryCluster) : map.removeLayer(injuryCluster));
+    document.getElementById("cluster-noninjury").addEventListener("change", (e) => e.target.checked ? map.addLayer(nonInjuryCluster) : map.removeLayer(nonInjuryCluster));
 
-  // All points
-  // constructs a variable to store geojson and later added in points variable for radio buttons
-  var allCollisions = L.geoJson(allCollisionsGeoJSON, {
-    pointToLayer: function (all_points, latlng) {
-      return L.circleMarker(latlng);
-    },
-  }).setStyle(allCircleOptions);
-
-  // print to check
-  //console.log(allCollisions)
-
-  // style function for hex grids
-  function hexColor(d) {
-    return d > 6
-      ? "#BD0026"
-      : d > 5
-      ? "#E31A1C"
-      : d > 4
-      ? "#FC4E2A"
-      : d > 3
-      ? "#FD8D3C"
-      : d > 2
-      ? "#FEB24C"
-      : d > 1
-      ? "#FED976"
-      : "#FFEDA0";
+    updateChart();
   }
 
-  // style function for hex grids
-  function hexColorScooters(d) {
-    return d > 5
-      ? "#BD0026"
-      : d > 4
-      ? "#E31A1C"
-      : d > 3
-      ? "#FC4E2A"
-      : d > 2
-      ? "#FD8D3C"
-      : d > 1
-      ? "#FEB24C"
-      : "#FFEDA0";
+  function updateChart() {
+    if (!injuryChart || !dowChart) return;
+    const start = document.getElementById("start-month").value;
+    const end = document.getElementById("end-month").value;
+    const cnts = {}, dowCnts = { Sunday:0, Monday:0, Tuesday:0, Wednesday:0, Thursday:0, Friday:0, Saturday:0 };
+
+    allFeatures.forEach((f) => {
+      const dt = parseDate(f.properties.DATE);
+      const key = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}`;
+      if (key < start || key > end) return;
+      cnts[key] = cnts[key] || { sum: 0, c: 0 };
+      cnts[key].sum += f.properties.Injured || 0;
+      cnts[key].c++;
+
+      const day = f.properties.DoW;
+      if (dowCnts[day] !== undefined) dowCnts[day]++;
+    });
+
+    const labels = Object.keys(cnts).sort();
+    injuryChart.data.labels = labels;
+    injuryChart.data.datasets[0].data = labels.map((k) => cnts[k].sum / cnts[k].c);
+    injuryChart.update();
+
+    const dowLabels = Object.keys(dowCnts);
+    dowChart.data.labels = dowLabels;
+    dowChart.data.datasets[0].data = dowLabels.map((d) => dowCnts[d]);
+    dowChart.update();
   }
-
-  // Hex styles for all collisions, scooters, and bicycles
-  // hex for all collisions style
-  function hexStyle(feature) {
-    return {
-      fillColor: hexColor(feature.properties.all_NUMPOINTS),
-      weight: 2,
-      opacity: 1,
-      color: "black",
-      fillOpacity: 0.5,
-      stroke: 4,
-    };
-  }
-  // hex for scooters style
-  function hexStyleScooter(feature) {
-    return {
-      fillColor: hexColorScooters(feature.properties.NUMPOINTS),
-      weight: 2,
-      opacity: 1,
-      color: "black",
-      fillOpacity: 0.5,
-      stroke: 4,
-    };
-  }
-  // hex for bicycles count style
-  function hexStyleBicycle(feature) {
-    return {
-      fillColor: hexColorScooters(feature.properties.Bicycle_NUMPOINTS),
-      weight: 2,
-      opacity: 1,
-      color: "black",
-      fillOpacity: 0.5,
-      stroke: 4,
-    };
-  }
-
-  // load hex density of all collisions
-  var hex = L.geoJson(hexGridGeoJSON, {
-    pointToLayer: function (hex_grid, latlng) {
-      return L.polygon(latlng, { color: "red" });
-    },
-    style: hexStyle,
-    onEachFeature: function (feature, layer) {
-      const props = feature.properties;
-      //console.log(props)
-      const popup = `<h3> Number of all collisions: <strong>${props["all_NUMPOINTS"]}</h3>`;
-
-      layer.bindPopup(popup);
-      layer.on("mouseover", function () {
-        this.setStyle({
-          color: "yellow",
-        });
-      }),
-        layer.on("mouseout", function () {
-          this.setStyle({
-            color: "black",
-          });
-        });
-    },
-  });
-
-  console.log(hex);
-
-  // load hexagon density of scooters
-  var hexScooters = L.geoJson(hexGridGeoJSON, {
-    pointToLayer: function (hex_grid, latlng) {
-      return L.polygon(latlng, { color: "red" });
-    },
-    style: hexStyleScooter,
-    onEachFeature: function (feature, layer) {
-      const props = feature.properties;
-      //console.log(props)
-      const popup = `<h3> Number of scooter collisions: <strong>${props["NUMPOINTS"]}</h3>`;
-      layer.bindPopup(popup);
-      layer.on("mouseover", function () {
-        this.setStyle({
-          color: "yellow",
-        });
-      }),
-        layer.on("mouseout", function () {
-          this.setStyle({
-            color: "black",
-          });
-        });
-    },
-  });
-
-  // load hexagon density of bicycles
-  var hexBicycles = L.geoJson(hexGridGeoJSON, {
-    pointToLayer: function (hex_grid, latlng) {
-      return L.polygon(latlng, { color: "red" });
-    },
-    style: hexStyleBicycle,
-    onEachFeature: function (feature, layer) {
-      const props = feature.properties;
-      //console.log(props)
-      const popup = `<h3>Number of bicycle collisions: <strong>${props["Bicycle_NUMPOINTS"]}</h3>`;
-      layer.bindPopup(popup);
-      layer.on("mouseover", function () {
-        this.setStyle({
-          color: "yellow",
-        });
-      }),
-        layer.on("mouseout", function () {
-          this.setStyle({
-            color: "black",
-          });
-        }),
-        layer.on("click", function (e) {
-          map.flyTo(e.latlng, 15);
-          map.setView(e.latlng)
-        });
-    },
-  });
-
-  var points = {
-    "All Bicycle/Scooter Collisions": allCollisions,
-    "Bicycle Collisions": collisionBicycles,
-    "Scooter Collisions": collisionScooters,
-    "Hexagonal Density Grid of All Collisions": hex,
-    "Hexagonal Density Grid of Scooter Collisions": hexScooters,
-    "Hexagonal Density Grid of Bicycle Collisions": hexBicycles,
-  };
-
-  // add the scooter/bicycle collision points to one layer group
-  L.control.layers(points).addTo(map);
-
-  // var for Fayette County coordinates
-  var fayetteCoords = [38.035631, -84.498344];
-
-  // return to Fayette County bounds on bottom button
-  $("#button-fly-nash").on("click", function () {
-    map.flyTo(fayetteCoords, 12);
-  });
-}
-
-
-//  L E G E N D //
-
-// add legend to the map
-function addLegend(breaks) {
-  // create leaflet object to and position top left
-  const legendControl = L.control({
-    position: "bottomright",
-  });
-
-  // when legend is added to map
-  legendControl.onAdd = function () {
-    /*Legend specific*/
-    var legend = L.control({ position: "bottomright" });
-
-    legend.onAdd = function (map) {
-      var div = L.DomUtil.create("div", "legend");
-      div.innerHTML += "<h4>Legend</h4><hr>";
-      div.innerHTML += "<strong>Collision Points<br>";
-      div.innerHTML += "<i id = circle></i><span>All Collisions</span><br>";
-      div.innerHTML += "<i id = circle></i><span>Bicycle Collisions</span><br>";
-      div.innerHTML +=
-        "<i id = circle></i><span>E-Scooter Collisions</span><br><hr>";
-      div.innerHTML += "<strong>Choropleth Density # of Collisions <br>";
-      div.innerHTML += "<i id = hexagon></i><span>0 Collisions </span><br>";
-      div.innerHTML +=
-        "<i id = hexagon></i><span>1 ─  2 Collisions </span><br>";
-      div.innerHTML += "<i  id= hexagon></i><span>3 ─  4 Collisions <br>";
-      div.innerHTML += "<i  id= hexagon></i><span> > 5 Collisions <br>";
-
-      return div;
-      // disable scroll and click from propogating
-      L.DomEvent.disableScrollPropagation(legend);
-      L.DomEvent.disableClickPropogation(legend);
-
-      // return the selecion to the method
-      return legend;
-    };
-
-    // add the empty legend div to the map
-    legend.addTo(map);
-  };
-  addLegend(breaks);
-}
+});
