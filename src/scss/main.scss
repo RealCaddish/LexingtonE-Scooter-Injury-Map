@@ -1,16 +1,22 @@
-@import "./abstracts/variables";
-
-#map { height: 180px; }
-// custom colors 
-$custom-colors: (
-  "custom-color": #345545
-);
-
-// 3. Include remainder of required Bootstrap stylesheets
-@import "~bootstrap/scss/variables";
-
-@import "~bootstrap/scss/maps";
-@import "~bootstrap/scss/mixins";
-@import "~bootstrap/scss/root";
-
-@import "~bootstrap/scss/bootstrap";
+html, body { height: 100%; margin: 0; }
+#map { position: absolute; top: 0; bottom: 0; left: 0; right: 400px; }
+#dashboard {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100%;
+  background: #fff;
+  border-left: 1px solid #ccc;
+  padding: 2rem;
+  overflow: visible !important;
+  z-index: 1000;
+  font-family: 'Montserrat', sans-serif;
+}
+.form-control[type="month"] { margin-bottom: 2rem; }
+#injuryChart, #dowChart { width: 100%; height: 250px; margin-bottom: 2rem; }
+.map-legend-container { background: #fff; padding: 8px; border-radius: 4px; box-shadow: 0 0 6px rgba(0,0,0,0.3); font-size: 14px; max-width: 180px; }
+.map-legend-container .map-description { margin-bottom: 6px; font-size: 13px; }
+.map-legend-container .legend-title { font-weight: bold; margin-bottom: 4px; font-size: 15px; }
+.map-legend-container .legend-item { display: flex; align-items: center; margin-bottom: 4px; }
+.map-legend-container .legend-color { width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
