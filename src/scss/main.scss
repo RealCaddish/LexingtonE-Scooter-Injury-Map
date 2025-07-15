@@ -1,18 +1,37 @@
 html, body { height: 100%; margin: 0; }
 #map { position: absolute; top: 0; bottom: 0; left: 0; right: 400px; }
+/* Mobile-friendly toggle styles */
 #dashboard {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 400px;
-  height: 100%;
-  background: #fff;
-  border-left: 1px solid #ccc;
-  padding: 2rem;
-  overflow: visible !important;
-  z-index: 1000;
-  font-family: 'Montserrat', sans-serif;
+  transition: transform 0.3s ease-in-out;
 }
+
+.dashboard-visible {
+  transform: translateX(0);
+}
+
+.dashboard-hidden {
+  transform: translateX(100%);
+}
+
+/* On smaller screens, take up full width when open */
+@media (max-width: 768px) {
+  #map {
+    right: 0; /* full width */
+  }
+
+  #dashboard {
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    background-color: #fff;
+    z-index: 1000;
+  }
+
+  #toggle-dashboard {
+    display: block;
+  }
+}
+
 .form-control[type="month"] { margin-bottom: 2rem; }
 #injuryChart, #dowChart { width: 100%; height: 250px; margin-bottom: 2rem; }
 .map-legend-container { background: #fff; padding: 8px; border-radius: 4px; box-shadow: 0 0 6px rgba(0,0,0,0.3); font-size: 14px; max-width: 180px; }
@@ -20,3 +39,59 @@ html, body { height: 100%; margin: 0; }
 .map-legend-container .legend-title { font-weight: bold; margin-bottom: 4px; font-size: 15px; }
 .map-legend-container .legend-item { display: flex; align-items: center; margin-bottom: 4px; }
 .map-legend-container .legend-color { width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+
+#map-legend {
+  background-color: #ffffff;
+  padding: 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  font-size: 14px;
+  max-width: 200px;
+  z-index: 1001;
+}
+
+#map-legend .map-description {
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+#map-legend .legend-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+#map-legend .legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+#map-legend .legend-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+@media (max-width: 768px) {
+  #map-legend {
+    display: none;
+    position: absolute !important;
+    bottom: 80px; /* push up above the toggle button */
+    left: 12px;
+    width: 90%;
+    background-color: white;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+
+  #toggle-legend {
+    position: absolute;
+    bottom: 20px;
+    left: 12px;
+    z-index: 1100;
+  }
+}
+
