@@ -35,7 +35,7 @@ titleControl.onAdd = function () {
   const div = L.DomUtil.create("div", "map-title-container");
   div.innerHTML = `
     <h2 class="map-title">Lexington Motorized Scooter Injury Map</h2>
-    <p class="map-subtitle">Locations of Injury and Non-Injury Accidents from 2019–2023</p>
+    <p class="map-subtitle">Locations of Injury and Non-Injury Accidents from 2019–2022</p>
   `;
   return div;
 };
