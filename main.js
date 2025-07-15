@@ -68,7 +68,7 @@ titleControl.addTo(map);
   let allFeatures = [];
 
   // Fetch scooter data
-  fetch("../data/geojson/scooter_collisions.geojson")
+  fetch("scooter_collisions.geojson")
     .then((r) => {
       if (!r.ok) throw Error(r.status);
       return r.json();
