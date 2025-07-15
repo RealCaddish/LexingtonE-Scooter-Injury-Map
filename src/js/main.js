@@ -11,28 +11,57 @@ document.addEventListener("DOMContentLoaded", () => {
     return new Date(str);
   }
 
-  const map = L.map("map").setView([38.04696, -84.50747], 12);
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-    attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
-  }).addTo(map);
+const map = L.map("map", {
+  zoomControl: false,
+  maxZoom: 18 // ✅ Fix: define maxZoom to avoid plugin complaints
+}).setView([38.04696, -84.50747], 12);
+
+// Re-add zoom control to bottom right
+L.control.zoom({ position: 'bottomright' }).addTo(map);
+  // Add custom title and subtitle
+  const titleContainer = L.DomUtil.create("div", "map-title-container");
+  titleContainer.innerHTML = `
+  <h2 class="map-title">Lexington Motorized Scooter Injury Map</h2>
+  <p class="map-subtitle">Locations of Injury and Non-Injury Accidents from 2019–2023</p>
+`;
+L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+  attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+  maxZoom: 18
+}).addTo(map);
+
+  // Use Leaflet control to place it in the top-left
+ const titleControl = L.control({ position: 'topleft' });
+titleControl.onAdd = function () {
+  const div = L.DomUtil.create("div", "map-title-container");
+  div.innerHTML = `
+    <h2 class="map-title">Lexington Motorized Scooter Injury Map</h2>
+    <p class="map-subtitle">Locations of Injury and Non-Injury Accidents from 2019–2023</p>
+  `;
+  return div;
+};
+titleControl.addTo(map);
 
   // Legend & description
-  const legend = L.control({ position: "bottomleft" });
+  // Legend & description
+  const legend = L.control({ position: "bottomleft" }); // ✅ declare the variable
+
   legend.onAdd = () => {
     const div = L.DomUtil.create("div", "map-legend-container leaflet-control");
-    div.setAttribute("id", "map-legend");
+    div.id = "map-legend";
     div.innerHTML = `
-      <div class="map-description">
-        This map shows motorized scooter injury incidents in Lexington, Kentucky. 
-        Use the date selectors to filter by month and year; the map will update to show incident locations.
-      </div>
-      <div class="legend-title">Legend</div>
-      <div class="legend-item"><span class="legend-color" style="background:red;"></span>Injury</div>
-      <div class="legend-item"><span class="legend-color" style="background:green;"></span>Non-Injury</div>
-    `;
+    <div class="map-description">
+      This map shows motorized scooter injury incidents in Lexington, Kentucky. 
+      Use the date selectors to filter by month and year; the map will update to show incident locations.
+    </div>
+    <div class="legend-title">Legend</div>
+    <div class="legend-item"><span class="legend-color" style="background:red;"></span>Injury</div>
+    <div class="legend-item"><span class="legend-color" style="background:green;"></span>Non-Injury</div>
+  `;
     return div;
   };
-  legend.addTo(map);
+
+  legend.addTo(map); // ✅ now it’s defined and safe to use
+
 
   const injuryCluster = L.markerClusterGroup();
   const nonInjuryCluster = L.markerClusterGroup();
