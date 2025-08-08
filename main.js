@@ -50,12 +50,28 @@ titleControl.addTo(map);
     div.id = "map-legend";
     div.innerHTML = `
     <div class="map-description">
-      This map shows motorized scooter injury incidents in Lexington, Kentucky. 
-      Use the date selectors to filter by month and year; the map will update to show incident locations.
+      This interactive map displays motorized scooter incidents in Lexington, Kentucky from 2019-2023. 
+      Use the date selectors in the sidebar to filter incidents by time period. 
+      Clusters automatically group nearby incidents for better visualization.
     </div>
-    <div class="legend-title">Legend</div>
-    <div class="legend-item"><span class="legend-color" style="background:red;"></span>Injury</div>
-    <div class="legend-item"><span class="legend-color" style="background:green;"></span>Non-Injury</div>
+    <div class="legend-title">Incident Types</div>
+    <div class="legend-item">
+      <span class="legend-color" style="background: linear-gradient(135deg, #ff7e40 0%, #e65a2b 100%);"></span>
+      <div>
+        <strong>Injury Incidents</strong><br>
+        <small>Accidents resulting in injuries</small>
+      </div>
+    </div>
+    <div class="legend-item">
+      <span class="legend-color" style="background: linear-gradient(135deg, #fed501 0%, #e6c000 100%);"></span>
+      <div>
+        <strong>Non-Injury Incidents</strong><br>
+        <small>Property damage or minor accidents</small>
+      </div>
+    </div>
+    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.1); font-size: 12px; color: #5a6c7d;">
+      💡 <strong>Tip:</strong> Click on clusters to zoom in and see individual incidents
+    </div>
   `;
     return div;
   };
@@ -93,9 +109,22 @@ titleControl.addTo(map);
         const injured = f.properties.Injured || 0;
         const [lng, lat] = f.geometry.coordinates;
         const m = L.circleMarker([lat, lng], {
-          radius: 6,
-          color: injured ? "red" : "green"
-        }).bindPopup(`Injured: ${injured}`);
+          radius: 8,
+          fillColor: injured ? "#ff7e40" : "#fed501",
+          color: injured ? "#e65a2b" : "#e6c000",
+          weight: 2,
+          opacity: 0.8,
+          fillOpacity: 0.7
+        }).bindPopup(`
+          <div style="font-family: 'Inter', sans-serif; min-width: 200px;">
+            <h6 style="margin: 0 0 8px 0; color: ${injured ? '#ff7e40' : '#fed501'};">
+              ${injured ? '🚨 Injury Incident' : '⚠️ Non-Injury Incident'}
+            </h6>
+            <p style="margin: 0 0 4px 0;"><strong>Date:</strong> ${f.properties.DATE}</p>
+            <p style="margin: 0 0 4px 0;"><strong>Day:</strong> ${f.properties.DoW}</p>
+            <p style="margin: 0;"><strong>Injuries:</strong> ${injured}</p>
+          </div>
+        `);
         injured ? injuryCluster.addLayer(m) : nonInjuryCluster.addLayer(m);
       });
 
