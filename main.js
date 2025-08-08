@@ -35,7 +35,7 @@ titleControl.onAdd = function () {
   const div = L.DomUtil.create("div", "map-title-container");
   div.innerHTML = `
     <h2 class="map-title">Lexington Motorized Scooter Injury Map</h2>
-    <p class="map-subtitle">Locations of Injury and Non-Injury Accidents from 2019–2022</p>
+    <p class="map-subtitle">Locations of Injury and Non-Injury Accidents from 2019–2023</p>
   `;
   return div;
 };
@@ -54,8 +54,8 @@ titleControl.addTo(map);
       Use the date selectors to filter by month and year; the map will update to show incident locations.
     </div>
     <div class="legend-title">Legend</div>
-    <div class="legend-item"><span class="legend-color" style="background:red;"></span>Injury</div>
-    <div class="legend-item"><span class="legend-color" style="background:green;"></span>Non-Injury</div>
+    <div class="legend-item"><span class="legend-color" style="background:#d9534f;"></span>Injury</div>
+    <div class="legend-item"><span class="legend-color" style="background:#5cb85c;"></span>Non-Injury</div>
   `;
     return div;
   };
@@ -94,7 +94,10 @@ titleControl.addTo(map);
         const [lng, lat] = f.geometry.coordinates;
         const m = L.circleMarker([lat, lng], {
           radius: 6,
-          color: injured ? "red" : "green"
+          color: injured ? "#d9534f" : "#5cb85c",
+          weight: 2,
+          fillColor: injured ? "#d9534f" : "#5cb85c",
+          fillOpacity: 0.8
         }).bindPopup(`Injured: ${injured}`);
         injured ? injuryCluster.addLayer(m) : nonInjuryCluster.addLayer(m);
       });
