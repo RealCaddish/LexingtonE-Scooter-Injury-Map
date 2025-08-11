@@ -221,6 +221,21 @@ html, body {
   font-family: 'Inter', sans-serif;
 }
 
+/* Desktop button positioning */
+#toggle-dashboard {
+  position: absolute;
+  bottom: 4rem;
+  left: 1rem;
+  z-index: 1100;
+}
+
+#toggle-legend {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 1100;
+}
+
 .btn-primary {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -241,111 +256,6 @@ html, body {
 .btn-secondary:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(108, 117, 125, 0.6);
-}
-
-/* Mobile adjustments */
-@media (max-width: 768px) {
-  #map {
-    right: 0 !important;
-  }
-
-  #dashboard {
-    width: 100%;
-    height: 100%;
-    padding: 1.5rem;
-    background: #f8f9fa;
-  }
-
-  #toggle-dashboard {
-    display: block;
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    z-index: 1100;
-    font-size: 14px;
-    padding: 0.5rem 1rem;
-  }
-
-  #map-legend {
-    display: none;
-    position: absolute !important;
-    bottom: 80px;
-    left: 12px;
-    right: 12px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
-    backdrop-filter: blur(10px);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    z-index: 1001;
-    max-height: 50vh;
-    overflow-y: auto;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  #toggle-legend {
-    position: absolute;
-    bottom: 20px;
-    left: 12px;
-    z-index: 1100;
-    font-size: 14px;
-    padding: 0.5rem 1rem;
-  }
-
-  .map-title-container {
-    margin: 12px;
-    padding: 16px 20px;
-  }
-
-  .map-title-container .map-title {
-    font-size: 18px;
-  }
-
-  .map-title-container .map-subtitle {
-    font-size: 13px;
-  }
-
-  /* Mobile-specific dashboard improvements */
-  #dashboard h4 {
-    font-size: 1.3rem;
-    margin-bottom: 0.8rem;
-  }
-
-  #dashboard h5 {
-    font-size: 1.1rem;
-    margin-top: 1.5rem;
-    margin-bottom: 0.8rem;
-  }
-
-  #dashboard p {
-    font-size: 14px;
-    margin-bottom: 1.2rem;
-  }
-
-  .form-control {
-    padding: 0.6rem;
-    font-size: 14px;
-  }
-
-  #injuryChart, #dowChart {
-    height: 200px;
-    margin-bottom: 1.5rem;
-  }
-
-  /* Better touch targets for mobile */
-  .form-check {
-    margin-bottom: 0.8rem;
-  }
-
-  .form-check-input {
-    transform: scale(1.2);
-    margin-right: 0.5rem;
-  }
-
-  .form-check-label {
-    font-size: 14px;
-    padding-top: 2px;
-  }
 }
 
 /* Chart styling improvements */
@@ -441,6 +351,167 @@ html, body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  #map {
+    right: 0 !important;
+  }
+
+  #dashboard {
+    width: 100%;
+    height: 100%;
+    padding: 1.5rem;
+    background: #f8f9fa;
+  }
+
+  /* Mobile button positioning and sizing */
+  #toggle-dashboard {
+    position: absolute;
+    bottom: 60px;
+    left: 12px;
+    z-index: 1100;
+    font-size: 10px;
+    padding: 0.25rem 0.5rem;
+    max-width: 70px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1;
+    height: 28px;
+    min-height: 28px;
+    border-radius: 6px;
+  }
+
+  #toggle-legend {
+    position: absolute;
+    bottom: 20px;
+    left: 12px;
+    z-index: 1100;
+    font-size: 10px;
+    padding: 0.25rem 0.5rem;
+    max-width: 70px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1;
+    height: 28px;
+    min-height: 28px;
+    border-radius: 6px;
+  }
+
+  /* Fix legend positioning and width for mobile */
+  #map-legend {
+    display: none;
+    position: absolute !important;
+    bottom: 80px;
+    left: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+    max-height: 60vh;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: calc(100vw - 24px);
+    max-width: none;
+  }
+
+  /* Improve legend content for mobile */
+  .map-legend-container {
+    max-width: none;
+    width: 100%;
+  }
+
+  .map-legend-container .legend-item {
+    padding: 12px 16px;
+    margin-bottom: 12px;
+  }
+
+  .map-legend-container .legend-color {
+    width: 20px;
+    height: 20px;
+    margin-right: 16px;
+  }
+
+  .map-legend-container .legend-item div {
+    flex: 1;
+  }
+
+  .map-legend-container .legend-item strong {
+    font-size: 15px;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .map-legend-container .legend-item small {
+    font-size: 13px;
+    line-height: 1.3;
+  }
+
+  /* Center title container at the top for mobile */
+  .map-title-container {
+    margin: 12px auto;
+    padding: 16px 20px;
+    max-width: calc(100vw - 24px);
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+  }
+
+  .map-title-container .map-title {
+    font-size: 18px;
+  }
+
+  .map-title-container .map-subtitle {
+    font-size: 13px;
+  }
+
+  /* Mobile-specific dashboard improvements */
+  #dashboard h4 {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+  }
+
+  #dashboard h5 {
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.8rem;
+  }
+
+  #dashboard p {
+    font-size: 14px;
+    margin-bottom: 1.2rem;
+  }
+
+  .form-control {
+    padding: 0.6rem;
+    font-size: 14px;
+  }
+
+  #injuryChart, #dowChart {
+    height: 200px;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Better touch targets for mobile */
+  .form-check {
+    margin-bottom: 0.8rem;
+  }
+
+  .form-check-input {
+    transform: scale(1.2);
+    margin-right: 0.5rem;
+  }
+
+  .form-check-label {
+    font-size: 14px;
+    padding-top: 2px;
+  }
+}
+
 /* Responsive improvements */
 @media (max-width: 480px) {
   .map-legend-container {
@@ -480,15 +551,49 @@ html, body {
     padding: 12px;
   }
 
-  #toggle-dashboard,
-  #toggle-legend {
-    font-size: 13px;
-    padding: 0.4rem 0.8rem;
+  /* Additional mobile legend improvements */
+  #map-legend {
+    bottom: 70px;
+    left: 8px;
+    right: 8px;
+    width: calc(100vw - 16px);
+    padding: 16px;
   }
 
-  .btn {
-    font-size: 13px;
-    padding: 0.5rem 1rem;
+  .map-legend-container .legend-item {
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+
+  .map-legend-container .legend-color {
+    width: 18px;
+    height: 18px;
+    margin-right: 12px;
+  }
+
+  .map-legend-container .legend-item strong {
+    font-size: 14px;
+  }
+
+  .map-legend-container .legend-item small {
+    font-size: 12px;
+  }
+
+  /* Better title positioning for very small screens */
+  .map-title-container {
+    max-width: calc(100vw - 24px);
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    padding: 12px 16px;
+  }
+
+  .map-title-container .map-title {
+    font-size: 16px;
+  }
+
+  .map-title-container .map-subtitle {
+    font-size: 12px;
   }
 }
 
@@ -504,6 +609,10 @@ html, body {
 
   .map-title-container {
     padding: 12px 16px;
+    max-width: calc(100vw - 24px);
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
   }
 
   .map-title-container .map-title {
@@ -512,5 +621,30 @@ html, body {
 
   .map-title-container .map-subtitle {
     font-size: 12px;
+  }
+
+  /* Landscape legend improvements */
+  #map-legend {
+    bottom: 60px;
+    max-height: 40vh;
+  }
+
+  .map-legend-container .legend-item {
+    padding: 8px 12px;
+    margin-bottom: 8px;
+  }
+
+  .map-legend-container .legend-color {
+    width: 16px;
+    height: 16px;
+    margin-right: 10px;
+  }
+
+  .map-legend-container .legend-item strong {
+    font-size: 13px;
+  }
+
+  .map-legend-container .legend-item small {
+    font-size: 11px;
   }
 }
